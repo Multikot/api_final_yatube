@@ -5,18 +5,19 @@ from rest_framework.pagination import LimitOffsetPagination
 from api.serializers import (CommentSerializer, FollowSerializer,
                              GroupSerializer, PostSerializer, UserSerializer)
 
-from .logic_views import FollowMixin, MyMixinViewSet, MyQuerySetMixin
-from .permissions import ReadPermission
+from .logic_views import CreateDestroyUpdateMixin, FollowMixin, QuerySetMixin
+from .permissions import (ReadOnlyPermission,
+                          ReadOrAuthorPutPatchDestroyPermission)
 
 
-class PostViewSet(MyMixinViewSet, viewsets.ModelViewSet):
+class PostViewSet(CreateDestroyUpdateMixin, viewsets.ModelViewSet):
     """ViewSet для создания, получения, удаления и редактирования постов.
     Методы, которые необходимо переопределить унаследовали от
     кастомного миксина.
     """
     queryset = Post.objects.all()
     serializer_class = PostSerializer
-    permission_classes = (ReadPermission,)
+    permission_classes = (ReadOrAuthorPutPatchDestroyPermission,)
     pagination_class = LimitOffsetPagination
 
 
@@ -25,10 +26,12 @@ class GroupViewSet(viewsets.ReadOnlyModelViewSet):
     Информацию получить могут только авторизованные пользователи."""
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    permission_classes = (ReadOnlyPermission,)
 
 
-class CommentViewSet(MyMixinViewSet, MyQuerySetMixin, viewsets.ModelViewSet):
+class CommentViewSet(
+    CreateDestroyUpdateMixin, QuerySetMixin, viewsets.ModelViewSet
+):
     """ViewSet для создания, получения, удаления и редактирования комментариев.
     Наследуемся от двух кастомных миксинов, переопределяем 4 метода.
     """
@@ -47,7 +50,6 @@ class FollowViewSet(FollowMixin, viewsets.ModelViewSet):
     """ViewSet для создания, получения подписок. Поиск по подписке.
     Наследуемся от кастомного миксина, переопределяем 2 метода.
     """
-    queryset = Follow.objects.all()
     serializer_class = FollowSerializer
     filter_backends = (filters.SearchFilter,)
     search_fields = ('following__username',)

@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404
 from posts.models import Follow, Post
 
 
-class MyMixinViewSet:
+class CreateDestroyUpdateMixin:
     """Кастомный миксин, который переопределяет встроенные методы:."""
     def perform_create(self, serializer):
         """При создании автора поста или комментария берем из request."""
@@ -22,7 +22,7 @@ class MyMixinViewSet:
         super().perform_update(serializer)
 
 
-class MyQuerySetMixin:
+class QuerySetMixin:
     """Ксатомный миксин для переопределения запроса."""
     def get_queryset(self):
         """Получаем post_id, который понадобится для создания комментария."""
