@@ -1,13 +1,12 @@
-from posts.models import Follow, Group, Post, User
-from rest_framework import filters, permissions, viewsets
+from posts.models import Group, Post, User
+from rest_framework import filters, viewsets
 from rest_framework.pagination import LimitOffsetPagination
 
 from api.serializers import (CommentSerializer, FollowSerializer,
                              GroupSerializer, PostSerializer, UserSerializer)
 
 from .logic_views import CreateDestroyUpdateMixin, FollowMixin, QuerySetMixin
-from .permissions import (ReadOnlyPermission,
-                          ReadOrAuthorPutPatchDestroyPermission)
+from .permissions import ReadOnlyPermission
 
 
 class PostViewSet(CreateDestroyUpdateMixin, viewsets.ModelViewSet):
@@ -17,7 +16,7 @@ class PostViewSet(CreateDestroyUpdateMixin, viewsets.ModelViewSet):
     """
     queryset = Post.objects.all()
     serializer_class = PostSerializer
-    permission_classes = (ReadOrAuthorPutPatchDestroyPermission,)
+    permission_classes = (ReadOnlyPermission,)
     pagination_class = LimitOffsetPagination
 
 
@@ -35,9 +34,8 @@ class CommentViewSet(
     """ViewSet для создания, получения, удаления и редактирования комментариев.
     Наследуемся от двух кастомных миксинов, переопределяем 4 метода.
     """
-    queryset = Follow.objects.all()
     serializer_class = CommentSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    permission_classes = (ReadOnlyPermission,)
 
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
@@ -52,4 +50,4 @@ class FollowViewSet(FollowMixin, viewsets.ModelViewSet):
     """
     serializer_class = FollowSerializer
     filter_backends = (filters.SearchFilter,)
-    search_fields = ('following__username',)
+    search_fields = ('following__username', 'user__username')
