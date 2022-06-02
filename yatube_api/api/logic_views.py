@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404
 from posts.models import Post
-from rest_framework import generics, mixins, views, viewsets
+from rest_framework import mixins, viewsets
 
 
 class CreateMixin:
