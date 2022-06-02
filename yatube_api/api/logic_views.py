@@ -1,5 +1,6 @@
 from django.shortcuts import get_object_or_404
 from posts.models import Post
+from rest_framework import generics, mixins, views, viewsets
 
 
 class CreateMixin:
@@ -18,7 +19,11 @@ class QuerySetMixin:
         return post.comments.all()
 
 
-class FollowMixin:
+class FollowMixin(mixins.CreateModelMixin,
+                  mixins.ListModelMixin,
+                  mixins.RetrieveModelMixin,
+                  viewsets.GenericViewSet):
+
     """Миксимн для подписок."""
     def get_queryset(self):
         """Получаем запрос, где юзера берем из request."""

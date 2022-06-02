@@ -5,11 +5,11 @@ from rest_framework.pagination import LimitOffsetPagination
 from api.serializers import (CommentSerializer, FollowSerializer,
                              GroupSerializer, PostSerializer, UserSerializer)
 
-from .logic_views import CreateDestroyUpdateMixin, FollowMixin, QuerySetMixin
+from .logic_views import CreateMixin, FollowMixin, QuerySetMixin
 from .permissions import ReadOnlyPermission
 
 
-class PostViewSet(CreateDestroyUpdateMixin, viewsets.ModelViewSet):
+class PostViewSet(CreateMixin, viewsets.ModelViewSet):
     """ViewSet для создания, получения, удаления и редактирования постов.
     Методы, которые необходимо переопределить унаследовали от
     кастомного миксина.
@@ -29,7 +29,7 @@ class GroupViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class CommentViewSet(
-    CreateDestroyUpdateMixin, QuerySetMixin, viewsets.ModelViewSet
+    CreateMixin, QuerySetMixin, viewsets.ModelViewSet
 ):
     """ViewSet для создания, получения, удаления и редактирования комментариев.
     Наследуемся от двух кастомных миксинов, переопределяем 4 метода.
@@ -44,7 +44,7 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = UserSerializer
 
 
-class FollowViewSet(FollowMixin, viewsets.ModelViewSet):
+class FollowViewSet(FollowMixin):
     """ViewSet для создания, получения подписок. Поиск по подписке.
     Наследуемся от кастомного миксина, переопределяем 2 метода.
     """
